@@ -6,7 +6,7 @@
         <h1>Add a Blog Entry</h1>
     </center>
     
-    <form method='post'>
+    <form action={{new_action}} method='post'>
         <label>
             Title for your new blog:
             <br/>
@@ -19,7 +19,7 @@
         <label>
             Your new blog:
             <br/>
-            <textarea rows="7" cols="30">
+            <textarea rows="7" cols="30" name='body'>
             </textarea>
         </label>
         <br/>
