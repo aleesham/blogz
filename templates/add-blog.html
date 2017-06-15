@@ -12,29 +12,19 @@
             <br/>
             <input type="text" name='title' />
         </label>
-        <br style="line-height: 1000px;">
+        <!-- Can I triple line break by changing height or using a different tag? -->
+        <br/> 
+        <br/> 
+        <br/> 
         <label>
             Your new blog:
             <br/>
-            <input type="text" name='body' />
+            <textarea rows="7" cols="30">
+            </textarea>
         </label>
-        <br>
+        <br/>
+        <br/>
+        <br/>
         <input type="submit" value='Add Entry' />
     </form>
-
-    <hr />
-<!--
-    {% if tasks|length == 0 %}
-
-    <p>No tasks yet</p>
-
-    {% else %}
-        <ul>
-            {% for task in tasks %}
-            <li>{{task}}</li>
-            {% endfor %}
-        </ul>
-
-    {% endif %}
--->
 {% endblock %}
