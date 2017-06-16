@@ -22,29 +22,31 @@ class Blog(db.Model):
         self.body = body
 
 
-### Everything works. Now go back and actually read the directions to see if everything works. Also I feel like this route can be done better, but I'm not really sure how just yet. 
 @app.route('/blog', methods = ['GET', 'POST'])
 def index():
     blog_id = request.args.get('id')
 
     if request.method == 'POST':
-        new_post_title = request.form['title']
-        new_post_body = request.form['body']
+        new_post_title = request.form['title'].strip()
+        new_post_body = request.form['body'].strip()
+        if (not new_post_title) or (not new_post_body):
+            error = "Something went wrong. Please try again."
+            return render_template('add-blog.html',  title = 'Build-a-Blog', post_title = new_post_title, post_body = new_post_body, error = error)
         post = Blog(new_post_title, new_post_body)
         db.session.add(post)
         db.session.commit()
+        return redirect('/blog?id='+str(post.id))
 
     if blog_id:
         post = Blog.query.filter_by(id=blog_id).first()
-        return render_template('display-post.html', post = post)
+        return render_template('display-post.html', title = post.title, post = post)
 
-    return render_template('blog.html', title = "Build-a-Blog", posts=Blog.query.all())
+    return render_template('blog.html', title = "Build-a-Blog", posts = Blog.query.all())
 
     
-@app.route('/newpost', methods = ['GET', 'POST'])
+@app.route('/newpost')
 def display():
-    new_action = "/blog?id=" + str(len(Blog.query.all()) + 1)
-    return render_template('add-blog.html', new_action = new_action, title = 'Build-a-Blog')
+    return render_template('add-blog.html', title = 'Build-a-Blog')
 
 
 if __name__ == '__main__':
