@@ -4,14 +4,15 @@
     <form action='/newpost' method='post'>
         Title for your new blog:
         <br />
-        <input type='text' name='title' />
+        <input type='text' name='title' value='{{blog_title}}'/>
+        <div class='error'>{{title_error}}</div>
         <br />
         <br />
         <br />
         Your new blog:
         <br />
-        <textarea rows="8" cols="24" name='body'>
-        </textarea>
+        <textarea rows="8" cols="24" name='body'>{{body}}</textarea>
+        <div class='error'>{{body_error}}</div>
         <br />
         <br />
         <br />
