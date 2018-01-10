@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session, flash
+from flask import Flask, redirect, render_template, request, session, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -35,27 +35,26 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup', 'blog', 'index']
     if 'username' not in session and request.endpoint not in allowed_routes:
         return redirect('/login')
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
-    ## TODO The validation certainly needs to be dealt with in a better way. 
-    ## TODO Add color to error messages.
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         verify_password = request.form['verify_password']
         existing_user = User.query.filter_by(username = username).all()
         if len(existing_user):
-            flash('Username already exists.')
-        elif len(username)<3 or len(username)>20:
-            flash('Username must be between 3 and 20 characters.')
-        elif password != verify_password:
-            flash('Passwords do not match.')
-        ### TODO Validate password/username length, non-empty, etc.
-        else:
+            flash('Username already exists.', 'error')
+        if len(username)*len(password)*len(verify_password) == 0:
+            flash('One or more fields left empty.', 'error')
+        if len(username)<3 or len(username)>20 or len(password)<3 or len(password)>20:
+            flash('Invalid username or password.', 'error')
+        if password != verify_password:
+            flash('Passwords do not match.', 'error')
+        if len(get_flashed_messages()) == 0:
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
@@ -72,16 +71,18 @@ def login():
         password = request.form['password']
         existing_user = User.query.filter_by(username = username).all()
         if len(existing_user) == 0:
-            flash('Username does not exist.')
+            flash('Username does not exist.', 'error')
         elif existing_user[0].password != password:
-            flash('Incorrect password.')
+            flash('Incorrect password.', 'error')
         else:
             session['username'] = username
+            flash('Logged in.')
             return redirect('/newpost')
     return render_template('login.html', title='Login')
  
 @app.route('/logout')
 def logout():
+    flash('Logged out.')
     del session['username']
     return redirect('/login')
 
@@ -113,7 +114,7 @@ def post():
             return render_template('newpost.html', title="Add a Blog Entry", blog_title = title, title_error = title_error, body = body, body_error = body_error)
             
         else:
-            blog = Blog(title, body)
+            blog = Blog(title, body, User.query.filter_by(username = session['username']).first())
             db.session.add(blog)
             db.session.commit()
             return redirect('/blog?id='+str(blog.id))
