@@ -41,9 +41,27 @@ def require_login():
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
+    ## TODO The validation certainly needs to be dealt with in a better way. 
+    ## TODO Add color to error messages.
     if request.method == 'POST':
-        return 'Test'
-    return render_template('signup.html', title='Signup')
+        username = request.form['username']
+        password = request.form['password']
+        verify_password = request.form['verify_password']
+        existing_user = User.query.filter_by(username = username).all()
+        if len(existing_user):
+            flash('Username already exists.')
+        elif len(username)<3 or len(username)>20:
+            flash('Username must be between 3 and 20 characters.')
+        elif password != verify_password:
+            flash('Passwords do not match.')
+        ### TODO Validate password/username length, non-empty, etc.
+        else:
+            new_user = User(username, password)
+            db.session.add(new_user)
+            db.session.commit()
+            session['username'] = username
+            return redirect('/newpost')
+    return render_template('signup.html', title='Sign Up')
     
 
 
