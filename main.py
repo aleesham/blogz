@@ -21,14 +21,14 @@ class Blog(db.Model):
         return '<Blog {0}>'.format(self.title)
 
 @app.route('/blog')
-def index():
+def displayAllBlogs():
     blog_id = request.args.get('id')
     if blog_id:
         blog = Blog.query.filter_by(id = int(blog_id)).first()
         return render_template('blog.html', title = blog.title, blog=blog)
     blogs = Blog.query.all()
     blogs.reverse()
-    return render_template('index.html',title='Build-a-Blog', blogs = blogs)
+    return render_template('displayBlogs.html',title='Build-a-Blog', blogs = blogs)
 
 @app.route('/newpost', methods = ['GET','POST'])
 def post():
