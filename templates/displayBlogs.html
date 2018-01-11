@@ -3,7 +3,8 @@
 {% block content %}
 
     {% for blog in blogs %}
-        <h2><a href='/blog?id={{blog.id}}'>{{blog.title}}</a></h2>
+        <h2><a href='/blog?id={{blog.id}}'>{{blog.title}}</a>
+        <span class="small" >by <a href='/blog?user_id={{blog.owner.id}}'>{{blog.owner.username}}</a></span></h2>
         <p>{{blog.body}}</p>
         <hr />
     {% endfor %}

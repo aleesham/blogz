@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ title }}</title>
+        <title>Blogz | {{ title }}</title>
         <style>
             * {
                 font-family: Arial, Helvetica, sans-serif;
@@ -18,6 +18,10 @@
             .right {
                 float: right;
             }
+
+            .small {
+                font-size: 10pt;
+            }
         </style>
     </head>
     <body>
@@ -26,6 +30,8 @@
             <a href='/blog'>Main Blog Page</a>
             &nbsp;
             <a href='/newpost'>Add a Blog Entry</a>
+            &nbsp;
+            <a href='/'>Home</a>
         </div>
 
         <div class = 'right'>
@@ -33,15 +39,7 @@
             &nbsp;
             <a href='/logout'>Logout</a>
             &nbsp;
-            <a href='/signup'>Sign Up</a>
-            <!-- TODO:
-
-                Add this, unsure of funtionality at the moment. Need to read more directions.
-
-            &nbsp;
-            <a href='/'>Index Page</a>
-
-               -->
+            <a href='/signup'>Create an Account</a>
         </div>
 
         <br />

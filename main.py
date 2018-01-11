@@ -35,7 +35,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index']
+    allowed_routes = ['login', 'signup', 'list_blogs', 'index']
     if 'username' not in session and request.endpoint not in allowed_routes:
         return redirect('/login')
 
@@ -74,6 +74,8 @@ def login():
             flash('Username does not exist.', 'error')
         elif existing_user[0].password != password:
             flash('Incorrect password.', 'error')
+        if len(get_flashed_messages()):
+            return redirect('/login')  # This conditional is unnecessary with the way the code is written but the instructions ask to redirect.
         else:
             session['username'] = username
             flash('Logged in.')
@@ -84,10 +86,10 @@ def login():
 def logout():
     flash('Logged out.')
     del session['username']
-    return redirect('/login')
+    return redirect('/blog')
 
 @app.route('/blog')
-def displayAllBlogs():
+def list_blogs():
     blog_id = request.args.get('id')
     if blog_id:
         blog = Blog.query.filter_by(id = int(blog_id)).first()

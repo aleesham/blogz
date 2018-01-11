@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <center><h3 class='small'>by <a href='/blog?user_id={{blog.owner.id}}'>{{blog.owner.username}}</h3></center>
     <p>{{blog.body}}</p>
 {% endblock %}
