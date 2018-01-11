@@ -88,12 +88,21 @@ def logout():
     del session['username']
     return redirect('/blog')
 
+@app.route('/')
+def index():
+    return render_template('index.html', title='Users', users=User.query.all())
+
 @app.route('/blog')
 def list_blogs():
     blog_id = request.args.get('id')
+    user_id = request.args.get('user_id')
     if blog_id:
-        blog = Blog.query.filter_by(id = int(blog_id)).first()
-        return render_template('blog.html', title = blog.title, blog=blog)
+        blog = Blog.query.filter_by(id=int(blog_id)).first()
+        return render_template('singleBlog.html', title = blog.title, blog=blog)
+    if user_id:
+        owner = User.query.filter_by(id=int(user_id)).first()
+        blogs = Blog.query.filter_by(owner=owner).all()
+        return render_template('singleUser.html', title = "Blogs by " + owner.username, blogs=blogs)
     blogs = Blog.query.all()
     blogs.reverse()
     return render_template('displayBlogs.html',title='Build-a-Blog', blogs = blogs)
