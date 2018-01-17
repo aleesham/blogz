@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, session, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
+from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -26,12 +27,12 @@ class Blog(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
-    password = db.Column(db.String(120))
+    pw_hash = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref = 'owner')
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.pw_hash = make_pw_hash(password)
 
 @app.before_request
 def require_login():
@@ -72,8 +73,11 @@ def login():
         existing_user = User.query.filter_by(username = username).all()
         if len(existing_user) == 0:
             flash('Username does not exist.', 'error')
-        elif existing_user[0].password != password:
-            flash('Incorrect password.', 'error')
+        else:
+            pw_hash = existing_user[0].pw_hash.split(',')[0]
+            salt = existing_user[0].pw_hash.split(',')[1]
+            if pw_hash != check_pw_hash(password, salt):
+                flash('Incorrect password.', 'error')
         if len(get_flashed_messages()):
             return redirect('/login')  # This conditional is unnecessary with the way the code is written but the instructions ask to redirect.
         else:
